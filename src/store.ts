@@ -23,10 +23,12 @@ export interface IStore {
 export function Restrict(permission?: Permission): any {
   return function (target: any, key: string | symbol) {
     const isReadable = permission === "r" || permission === "rw";
+    const isWritable = permission === "w" || permission === "rw";
+
     let value = target[key];
     Object.defineProperty(target, key, {
       enumerable: isReadable,
-      configurable: true,
+      configurable: isWritable,
       get: () => {
         if (isReadable) {
           return value;
@@ -52,7 +54,11 @@ export class Store implements IStore {
   }
 
   allowedToWrite(key: string): boolean {
-    return true;
+    return (
+      Object.getOwnPropertyDescriptor(this, key)?.configurable ||
+      this.defaultPolicy === "w" ||
+      this.defaultPolicy === "rw"
+    );
   }
 
   read(path: string): StoreResult {
@@ -63,7 +69,10 @@ export class Store implements IStore {
   }
 
   write(path: string, value: StoreValue): StoreValue {
-    return {};
+    if (this.allowedToWrite(path)) {
+      return {};
+    }
+    throw new Error();
   }
 
   writeEntries(entries: JSONObject): void {
