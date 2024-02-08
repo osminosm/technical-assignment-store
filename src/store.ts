@@ -44,7 +44,11 @@ export class Store implements IStore {
   defaultPolicy: Permission = "rw";
 
   allowedToRead(key: string): boolean {
-    return Object.getOwnPropertyDescriptor(this, key)?.enumerable as boolean;
+    return (
+      Object.getOwnPropertyDescriptor(this, key)?.enumerable ||
+      this.defaultPolicy === "r" ||
+      this.defaultPolicy === "rw"
+    );
   }
 
   allowedToWrite(key: string): boolean {
