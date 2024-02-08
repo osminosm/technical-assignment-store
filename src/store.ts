@@ -27,7 +27,7 @@ export class Store implements IStore {
   defaultPolicy: Permission = "rw";
 
   allowedToRead(key: string): boolean {
-    throw new Error("Method not implemented.");
+    return true;
   }
 
   allowedToWrite(key: string): boolean {
