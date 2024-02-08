@@ -36,7 +36,10 @@ export function Restrict(permission?: Permission): any {
         throw new Error();
       },
       set: (newValue: any) => {
-        value = newValue;
+        if (isWritable) {
+          value = newValue;
+        }
+        throw Error();
       },
     });
   };
@@ -69,10 +72,8 @@ export class Store implements IStore {
   }
 
   write(path: string, value: StoreValue): StoreValue {
-    if (this.allowedToWrite(path)) {
-      return {};
-    }
-    throw new Error();
+    Object.assign(this, { [path]: value });
+    return value;
   }
 
   writeEntries(entries: JSONObject): void {
