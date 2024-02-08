@@ -1,8 +1,6 @@
 import { lazy } from "./lazy";
-import { Restrict, Store } from "./store";
+import { Restrict, Store, StoreResult } from "./store";
 import { UserStore } from "./userStore";
-
-
 
 export class AdminStore extends Store {
   @Restrict("r")
@@ -20,5 +18,12 @@ export class AdminStore extends Store {
     super();
     this.defaultPolicy = "none";
     this.user = user;
+  }
+
+  read(key: string): StoreResult {
+    if (key === "name") {
+      throw new Error();
+    }
+    return super.read(key);
   }
 }
