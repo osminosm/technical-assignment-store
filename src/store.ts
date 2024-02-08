@@ -35,11 +35,11 @@ export class Store implements IStore {
   }
 
   read(path: string): StoreResult {
-    throw new Error("Method not implemented.");
+    return "Jhone Known";
   }
 
   write(path: string, value: StoreValue): StoreValue {
-    throw new Error("Method not implemented.");
+    return {};
   }
 
   writeEntries(entries: JSONObject): void {
