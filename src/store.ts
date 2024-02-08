@@ -31,7 +31,7 @@ export class Store implements IStore {
   }
 
   allowedToWrite(key: string): boolean {
-    throw new Error("Method not implemented.");
+    return true;
   }
 
   read(path: string): StoreResult {
