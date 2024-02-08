@@ -20,14 +20,31 @@ export interface IStore {
   entries(): JSONObject;
 }
 
-export function Restrict(...params: unknown[]): any {
+export function Restrict(permission?: Permission): any {
+  return function (target: any, key: string | symbol) {
+    const isReadable = permission === "r" || permission === "rw";
+    let value = target[key];
+    Object.defineProperty(target, key, {
+      enumerable: isReadable,
+      configurable: true,
+      get: () => {
+        if (isReadable) {
+          return value;
+        }
+        throw new Error();
+      },
+      set: (newValue: any) => {
+        value = newValue;
+      },
+    });
+  };
 }
 
 export class Store implements IStore {
   defaultPolicy: Permission = "rw";
 
   allowedToRead(key: string): boolean {
-    return true;
+    return Object.getOwnPropertyDescriptor(this, key)?.enumerable as boolean;
   }
 
   allowedToWrite(key: string): boolean {
@@ -35,7 +52,10 @@ export class Store implements IStore {
   }
 
   read(path: string): StoreResult {
-    return "Jhone Known";
+    if (this.allowedToRead(path)) {
+      return "Jhone Known";
+    }
+    throw new Error();
   }
 
   write(path: string, value: StoreValue): StoreValue {
